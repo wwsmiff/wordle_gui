@@ -1,9 +1,8 @@
 from tkinter import *
-from tkinter import ttk
 from tkinter import messagebox
 import random
 import mysql.connector as mys
-from time import time
+from time import time, sleep
 import threading
 import collections
 from tkinter.simpledialog import askstring
@@ -13,9 +12,9 @@ WIDTH = 1024
 HEIGHT = 720
 
 # Key States
-USED = "#242424"
-CORRECT = "#0f4200"
-EXISTS_IN_WORD = "#887400"
+USED = "#242424" # Grey
+CORRECT = "#0f4200" # Green
+EXISTS_IN_WORD = "#887400" # Yellow
 
 DEBUG = True
 
@@ -43,7 +42,6 @@ keylist = []
 labels_list = []
 
 main_frame = Frame(root)
-timer_frame = Frame(root)
 
 user_input = Entry(root, width=5, bg="black", fg="white", font=("JetBrains Mono", 27, "bold"))
 user_input.place(relx=0.4, rely=0.9)
@@ -175,16 +173,16 @@ def add_word(self):
         else:
             for i in range(5):
                 # Appending characters to display with colours
-                if user_input.get()[i] in random_word and i == random_word.index(user_input.get()[i]):
+                if user_input.get()[i] in random_word and i == random_word.index(user_input.get()[i]): # If its there in the word, and in the correct position
                     tmp_label[i].config(text=user_input.get()[i].upper())
                     tmp_label[i].config(bg="#0f4200")
                     update_keyboard(user_input.get()[i].upper(), CORRECT)
 
-                elif user_input.get()[i] in random_word:
+                elif user_input.get()[i] in random_word: # If the letter is there in the word, but not in the right position
                     tmp_label[i].config(text=user_input.get()[i].upper())
                     tmp_label[i].config(bg="#887400")
                     update_keyboard(user_input.get()[i].upper(), EXISTS_IN_WORD)
-                else:
+                else: # If the letter is not there in the word
                     tmp_label[i].config(text=user_input.get()[i].upper())
                     tmp_label[i].config(bg="#1f1f1f")
                     update_keyboard(user_input.get()[i].upper(), USED)
@@ -216,8 +214,6 @@ def exit():
 
     running = False
 
-
-
 def update_keyboard(letter, state):
     global user_input
     global keylist
@@ -238,7 +234,7 @@ def update_timer():
     mins = 0
     seconds = 0
 
-    while True:
+    while running:
         seconds = int(time() - start_time)
         time_elapsed_str = "{:02d}:{:02d}:{:02d}".format(hrs, mins, seconds)
         timer_label.config(text = time_elapsed_str)
@@ -252,9 +248,8 @@ def update_timer():
             hrs += 1
             seconds = 0
             start_time = time()
-
-        if running == False:
-            break
+        sleep(1)
+        
 
 if __name__ == "__main__":
     init()
@@ -262,7 +257,7 @@ if __name__ == "__main__":
         print(random_word)
     user_input.focus_set()
     main_frame.config(bg="#000000")
-    timer_frame.config(bg="#000000")
+    # timer_frame.config(bg="#000000")
     main_frame.pack()
     # timer_frame.pack()
     # Binding a callback function to the Enter/Return key
